@@ -1,0 +1,20 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+*.swp
+*.swo
+*~
+
+# Project-specific ignores will be added during initialization
+# Common patterns to consider adding:
+# node_modules/
+# __pycache__/
+# .env
+# .env.local
+# dist/
+# build/
+# target/
+# *.log
