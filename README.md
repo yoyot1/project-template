@@ -2,6 +2,38 @@
 
 A minimal, extensible template for bootstrapping new projects with Claude Code in VS Code dev containers.
 
+## Prerequisites (One-Time Host Setup)
+
+### GitHub CLI - VS Code Credential Forwarding
+
+VS Code automatically forwards GitHub credentials from your host machine into dev containers. To use this:
+
+1. Install the [GitHub Pull Requests and Issues](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github) extension on your **host** VS Code
+2. Sign in to GitHub through VS Code (click the Accounts icon in the sidebar)
+
+That's it - `gh` commands inside the container will use your host credentials automatically. No tokens or config files are exposed to the container.
+
+**To verify it's working** (inside the container):
+```bash
+gh auth status
+```
+
+### Claude Code - OAuth via Mount
+
+The dev container mounts your `~/.claude` directory so OAuth credentials are shared with the container.
+
+**One-time setup on your host:**
+```bash
+claude auth login
+```
+
+**What's exposed:** Your Claude OAuth tokens, custom commands, and settings. This does NOT include GitHub, AWS, or other credentials - only Claude-specific config.
+
+**To verify it's working** (inside the container):
+```bash
+claude --version
+```
+
 ## Quick Start
 
 ### Creating a New Project
@@ -51,7 +83,7 @@ Both scripts launch Claude Code to help you:
 ```
 .
 ├── .devcontainer/
-│   └── devcontainer.json          # Minimal base container
+│   └── devcontainer.json          # Container config (mounts ~/.claude for auth)
 ├── .vscode/
 │   └── settings.json              # Basic editor settings
 ├── CLAUDE.md                       # Project specification template
