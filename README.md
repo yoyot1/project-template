@@ -18,20 +18,22 @@ That's it - `gh` commands inside the container will use your host credentials au
 gh auth status
 ```
 
-### Claude Code - OAuth via Mount
+### Claude Code - OAuth Login
 
-The dev container mounts your `~/.claude` directory so OAuth credentials are shared with the container.
+Run `claude auth login` inside the container after it starts. The dev container includes a workaround (`NODE_OPTIONS=--dns-result-order=ipv4first`) that fixes the OAuth callback issue.
 
-**One-time setup on your host:**
 ```bash
 claude auth login
 ```
 
-**What's exposed:** Your Claude OAuth tokens, custom commands, and settings. This does NOT include GitHub, AWS, or other credentials - only Claude-specific config.
+This opens a browser for OAuth. Credentials are stored inside the container and persist until it's rebuilt.
 
-**To verify it's working** (inside the container):
-```bash
-claude --version
+**Note:** You'll need to re-authenticate after rebuilding the container. If you want credentials to persist across rebuilds, you can add a mount for `~/.claude`:
+
+```json
+"mounts": [
+  "source=${localEnv:HOME}/.claude,target=/home/vscode/.claude,type=bind,consistency=cached"
+]
 ```
 
 ## Quick Start
@@ -39,13 +41,11 @@ claude --version
 ### Creating a New Project
 
 ```bash
-# Clone this template with a new name
-gh repo create my-new-project --template YOUR_USERNAME/project-template --clone --private
+# Clone the template (without creating a GitHub repo yet)
+gh repo clone YOUR_USERNAME/project-template my-new-project
 cd my-new-project
 
-# Or without GitHub CLI:
-git clone https://github.com/YOUR_USERNAME/project-template.git my-new-project
-cd my-new-project
+# Remove the template's git history and start fresh
 rm -rf .git
 git init
 
@@ -53,6 +53,8 @@ git init
 code .
 # Then: Ctrl+Shift+P -> "Dev Containers: Reopen in Container"
 ```
+
+The init script will offer to create a GitHub repo for you during project setup.
 
 ### Initialize Your Project
 
